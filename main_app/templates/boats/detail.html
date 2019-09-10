@@ -3,16 +3,60 @@
 
 <h1>Boat Details</h1>
 
-<div class="card">
-  <div class="card-content">
-    <span class="card-title">{{ boat.name }}</span>
-    <p>Year: {{ boat.year }}</p>
-    <p>Manufacturer: {{ boat.manufacturer }}</p>
-    <p>Model: {{ boat.model }}</p>
-    <p>Length: {{ boat.length }}</p>
-    <p>Beam: {{ boat.beam }}</p>
-    <p>Description: {{ boat.description }}</p>
+<div class="row">
+<div class="col s6">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">{{ boat.name }}</span>
+        <p>Year: {{ boat.year }}</p>
+        <p>Manufacturer: {{ boat.manufacturer }}</p>
+        <p>Model: {{ boat.model }}</p>
+        <p>Length: {{ boat.length }}</p>
+        <p>Beam: {{ boat.beam }}</p>
+        <p>Description: {{ boat.description }}</p>
+      </div>
+            <div class="card-action">
+        <a href="{% url 'boats_update' boat.id %}">Edit</a>
+        <a href="{% url 'boats_delete' boat.id %}">Delete</a>
+      </div>
+    </div>
+  </div>
+  <div class="col s6">
+    <form action="{% url 'add_cleaning' boat.id %}" method="post">
+    {% csrf_token %}
+    {{ cleaning_form.as_p }}
+    <input type="submit" class="btn" value="Add Cleaning">
+  </form>
+  <br>
+  {% if boat.cleaned_recently %}
+    <div class="card-panel teal-text center-align">{{boat.name}} has been cleaned recently</div>
+  {% else %}
+    <div class="card-panel red-text center-align">{{boat.name}} might be dirty</div>
+  {% endif %}
+    <table class="striped">
+      <thead>
+        <tr><th>Date</th><th>Cleaning</th></tr>
+      </thead>
+      <tbody>
+        {% for cleaning in boat.cleaning_set.all %}
+          <tr>
+            <td>{{cleaning.date}}</td>
+            <td>{{cleaning.get_cleaning_display}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
-
+<script>
+  const dateEl = document.getElementById('id_date');
+  M.Datepicker.init(dateEl, {
+    format: 'yyyy-mm-dd',
+    defaultDate: new Date(),
+    setDefaultDate: true,
+    autoClose: true
+  });
+  const selectEl = document.getElementById('id_cleaning');
+  M.FormSelect.init(selectEl);
+</script>
 {% endblock %}
