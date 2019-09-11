@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from .models import Boat, Sail
+import uuid
+import boto3
+from .models import Boat, Sail, Photo
 from .forms import CleaningForm
+
+S3_BASE_URL = 'https://s3.us-east-2.amazonaws.com/'
+BUCKET = 'boatcollector-ajt'
 
 # Create Views Here
 def home(request):
@@ -20,7 +25,8 @@ def boat_detail(request, boat_id):
   sails_boat_doesnt_have = Sail.objects.exclude(id__in = boat.sails.all().values_list('id'))
   cleaning_form = CleaningForm()
   return render(request, 'boats/detail.html', { 
-    'boat': boat, 'cleaning_form': cleaning_form, 'sails': sails_boat_doesnt_have
+    'boat': boat, 'cleaning_form': cleaning_form, 
+    'sails': sails_boat_doesnt_have
   })
 
 def add_cleaning(request, boat_id):
@@ -67,4 +73,18 @@ def assoc_sail(request, boat_id, sail_id):
 
 def unassoc_sail(request, boat_id, sail_id):
   Boat.objects.get(id=boat_id).sails.remove(sail_id)
+  return redirect('detail', boat_id=boat_id)
+
+def add_photo(request, boat_id):
+  photo_file = request.FILES.get('photo-file', None)
+  if photo_file:
+      s3 = boto3.client('s3')
+      key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+      try:
+          s3.upload_fileobj(photo_file, BUCKET, key)
+          url = f"{S3_BASE_URL}{BUCKET}/{key}"
+          photo = Photo(url=url, boat_id=boat_id)
+          photo.save()
+      except:
+          print('An error occurred uploading file to S3')
   return redirect('detail', boat_id=boat_id)

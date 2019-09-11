@@ -53,3 +53,10 @@ class Cleaning(models.Model):
 
   class Meta:
     ordering = ['-date']
+
+class Photo(models.Model):
+  url = models.CharField(max_length=200)
+  boat = models.ForeignKey(Boat, on_delete=models.CASCADE)
+
+  def __str__(self):
+      return f"Photo for boat_id: {self.boat_id} @{self.url}"
