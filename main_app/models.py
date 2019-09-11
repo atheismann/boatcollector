@@ -9,6 +9,16 @@ CLEANINGS = (
 )
 
 # Create your models here.
+class Sail(models.Model):
+  name = models.CharField(max_length=50)
+  type = models.CharField(max_length=50)
+
+  def __str__(self):
+    return self.name
+
+  def get_absolute_url(self):
+    return reverse('sails_detail', kwargs={'pk': self.id})
+    
 class Boat(models.Model):
   name = models.CharField(max_length=100)
   manufacturer = models.CharField(max_length=100)
@@ -17,6 +27,7 @@ class Boat(models.Model):
   beam = models.CharField(max_length=100)
   year = models.IntegerField()
   description = models.TextField(max_length=250)
+  sails = models.ManyToManyField(Sail)
 
   def __str__(self):
     return self.name
