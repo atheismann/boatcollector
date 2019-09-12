@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from datetime import date
+from django.contrib.auth.models import User
 
 CLEANINGS = (
   ('H', 'Hull'),
@@ -28,6 +29,7 @@ class Boat(models.Model):
   year = models.IntegerField()
   description = models.TextField(max_length=250)
   sails = models.ManyToManyField(Sail)
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
 
   def __str__(self):
     return self.name

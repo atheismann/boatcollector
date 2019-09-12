@@ -18,4 +18,5 @@ urlpatterns = [
   path('sails/create/', views.SailCreate.as_view(), name='sails_create'),
   path('sails/<int:pk>/update/', views.SailUpdate.as_view(), name='sails_update'),
   path('sails/<int:pk>/delete/', views.SailDelete.as_view(), name='sails_delete'),
+  path('accounts/signup', views.signup, name='signup'),
 ]

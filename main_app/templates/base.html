@@ -19,11 +19,20 @@
           <li><a href="/" class="left brand-logo">&nbsp;&nbsp;BoatCollector</a></li>
         </ul>
         <ul class="right">
-          <li><a href="{% url 'about' %}">About</a></li>
-          <li><a href="{% url 'sails_create' %}">Add a Sail</a></li>
-          <li><a href="{% url 'sails_index' %}">View All Sails</a></li>
-          <li><a href="{% url 'boats_create' %}">Add a Boat</a></li>
-          <li><a href="{% url 'index' %}">View All My Boats</a></li>
+          {% if user.is_authenticated %}
+            <li>Hi, {{ user.get_short_name }}</li>
+          {% endif %}
+            <li><a href="{% url 'about' %}">About</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'sails_create' %}">Add a Sail</a></li>
+            <li><a href="{% url 'sails_index' %}">View All Sails</a></li>
+            <li><a href="{% url 'boats_create' %}">Add a Boat</a></li>
+            <li><a href="{% url 'index' %}">View All My Boats</a></li>
+            <li><a href="{% url 'logout' %}">Log Out</a></li>
+          {% else %}
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Log In</a></li>
+          {% endif %}
         </ul>
       </div>
     </nav>
